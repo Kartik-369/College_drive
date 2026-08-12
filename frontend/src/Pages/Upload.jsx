@@ -119,9 +119,10 @@ function Upload() {
         throw new Error("Failed to upload file to Cloud Storage");
       }
 
-      // Generate the public Firebase download URL format manually or handle in backend
-      const bucketName = import.meta.env.VITE_FIREBASE_BUCKET || "your-app.appspot.com"; // Set in env
-      const downloadUrl = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(file_path)}?alt=media`;
+      // Generate the public B2 download URL manually
+      const b2Endpoint = import.meta.env.VITE_B2_ENDPOINT_URL || "https://s3.us-west-004.backblazeb2.com";
+      const bucketName = import.meta.env.VITE_B2_BUCKET_NAME || "your-bucket-name";
+      const downloadUrl = `${b2Endpoint}/${bucketName}/${encodeURIComponent(file_path)}`;
 
       setUploadProgress("Saving metadata...");
 

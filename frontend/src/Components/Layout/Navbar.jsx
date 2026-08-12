@@ -42,8 +42,7 @@ function Navbar() {
         
         <Link to='/'>
           <span className="text-2xl min-[1100px]:text-4xl tracking-tight font-bold shrink-0 z-10">
-            NeuroBusiness
-            <p className="text-[14px] font-sans font-semibold tracking-tighter hidden min-[1100px]:flex">Predictive Customer Intelligence</p>
+            College Drive
           </span>
         </Link>
 
@@ -59,7 +58,7 @@ function Navbar() {
               <>
                 <span className="text-sm font-sans font-semibold mr-2">{userEmail}</span>
                   <Button onClick={handleCheckUpload} variant="outlined" color="inherit" sx={{ px: 3, py: 1, borderRadius: 8, textTransform: 'none', border: '1px solid #e5e7eb', '&:hover': { bgcolor: 'black', color: 'white', borderColor: 'black' } }}>
-                    Workspace
+                    My Drive
                   </Button>
                 <Button onClick={handleLogout} color="inherit" sx={{ px: 3, py: 1, borderRadius: 8, textTransform: 'none', border: '1px solid #e5e7eb', color: 'black', '&:hover': { bgcolor: 'black', color: 'white' } }}>
                   Logout
@@ -106,7 +105,7 @@ function Navbar() {
               <>
                 <div className="block w-full text-center font-sans text-sm font-semibold">{userEmail}</div>
                 <div className="block w-full">
-                  <Button fullWidth onClick={() => { setOpen(false);handleCheckUpload() }} sx={{ borderRadius: 8, textTransform: 'none', bgcolor: '#111827', color: 'white', '&:hover': { bgcolor: 'black' } }} className="p-2">Workspace</Button>
+                  <Button fullWidth onClick={() => { setOpen(false);handleCheckUpload() }} sx={{ borderRadius: 8, textTransform: 'none', bgcolor: '#111827', color: 'white', '&:hover': { bgcolor: 'black' } }} className="p-2">My Drive</Button>
                 </div>
                 <div className="block w-full">
                   <Button fullWidth onClick={() => { setOpen(false); handleLogout(); }} sx={{ borderRadius: 8, textTransform: 'none', border: '1px solid #e5e7eb', color: 'black', '&:hover': { bgcolor: 'black', color: 'white' } }} className="p-2">Logout</Button>
