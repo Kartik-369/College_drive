@@ -1,0 +1,32 @@
+# Environments
+backenv/
+venv/
+env/
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# User Uploads & Data
+upload_files/
+*.csv
+*.xlsx
+*.log
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Optional: If you don't want to track your ML models (since they can be large)
+# Uncomment the line below if you want to ignore them.
+# ml-models/neuro_business_brain.pkl

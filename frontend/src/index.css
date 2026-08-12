@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Prata&display=swap');
+@import "tailwindcss";
+@theme {
+  /* 1. Canela Alternative (Soft & Fashionable) */
+  --font-canela: "Fraunces", serif;
+
+  /* 2. Ogg Alternative (High Contrast & Editorial) */
+  --font-ogg: "Playfair Display", serif;
+
+  /* 3. Roslindale Alternative (Victorian & Elegant) */
+  --font-roslindale: "Cormorant Garamond", serif;
+
+  /* 4. Sharp Luxury (Good for big titles) */
+  --font-prata: "Prata", serif;
+}
