@@ -1,14 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import JSZip from "jszip";
 
 function Upload() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [projectName, setProjectName] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+
+  // Extract the folder we navigated from, default to DBMS if direct hit
+  const subjectFolder = location.state?.folder || "DBMS";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,7 +25,7 @@ function Upload() {
     if (fileRejections.length > 0) {
       alert("Some files were rejected. Ensure they are under 15MB and not .exe/.sh files.");
     }
-    
+
     // Filter out node_modules and .class files
     const validFiles = acceptedFiles.filter(file => {
       const path = file.path || file.name;
@@ -55,7 +59,7 @@ function Upload() {
       return;
     }
     if (!projectName.trim()) {
-      alert("Please enter a folder name!");
+      alert("Please enter an assignment name!");
       return;
     }
 
@@ -83,7 +87,7 @@ function Upload() {
       const zipFileName = `${projectName.replace(/\s+/g, "_")}_Submission.zip`;
 
       setUploadProgress("Requesting secure upload link...");
-      
+
       // 2. Request Pre-signed URL from FastAPI
       const presignResponse = await fetch(`${import.meta.env.VITE_API_URL}/files/presign`, {
         method: "POST",
@@ -106,7 +110,7 @@ function Upload() {
 
       setUploadProgress("Uploading to Cloud...");
 
-      // 3. Upload directly to Firebase Storage using the Pre-signed URL
+      // 3. Upload directly to Cloud Storage using the Pre-signed URL
       const uploadResponse = await fetch(upload_url, {
         method: "PUT",
         headers: {
@@ -126,7 +130,7 @@ function Upload() {
 
       setUploadProgress("Saving metadata...");
 
-      // 4. Save metadata to backend
+      // 4. Save metadata to backend (ADDED subject_folder and object_key)
       const saveResponse = await fetch(`${import.meta.env.VITE_API_URL}/files`, {
         method: "POST",
         headers: {
@@ -136,7 +140,9 @@ function Upload() {
         body: JSON.stringify({
           file_name: zipFileName,
           size: zipBlob.size,
-          cloud_storage_url: downloadUrl
+          cloud_storage_url: downloadUrl,
+          subject_folder: subjectFolder,
+          object_key: file_path
         })
       });
 
@@ -165,9 +171,9 @@ function Upload() {
         <form className="w-full shadow-lg shadow-gray-200 border border-stone-200 bg-amber-50/30 p-9 rounded-3xl max-w-xl">
           <div className="flex flex-row justify-between items-center mt-3 mb-6">
             <h1 className="text-2xl font-bold text-gray-800">
-              Upload Files
+              Upload to {subjectFolder}
             </h1>
-            <button 
+            <button
               onClick={() => navigate(-1)}
               className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
               type="button"
@@ -175,21 +181,21 @@ function Upload() {
               Go Back
             </button>
           </div>
-          
+
           <div className="mb-6">
-            <label className="block mb-2 font-semibold text-gray-700">Folder / Assignment Name</label>
-            <input 
+            <label className="block mb-2 font-semibold text-gray-700">Assignment Name</label>
+            <input
               required
-              type="text" 
-              placeholder="e.g. Lab 1"
+              type="text"
+              placeholder="e.g. Assignment 1"
               className="block w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
             />
           </div>
 
-          <div 
-            {...getRootProps()} 
+          <div
+            {...getRootProps()}
             className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors duration-300 ${isDragActive ? "border-emerald-500 bg-emerald-50/50" : "border-gray-300 hover:border-emerald-400 bg-white"}`}
           >
             <input {...getInputProps()} />
@@ -205,8 +211,8 @@ function Upload() {
                 {selectedFiles.map((f, i) => (
                   <li key={i} className="flex justify-between items-center text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
                     <span className="truncate max-w-[80%]">{f.path || f.name}</span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => removeFile(i)}
                       className="text-red-500 hover:text-red-700 font-bold"
                     >
@@ -224,7 +230,7 @@ function Upload() {
               disabled={isUploading || selectedFiles.length === 0 || !projectName}
               className={`w-full px-6 py-4 text-sm font-bold tracking-wide text-white transition-all duration-300 rounded-xl shadow-lg focus:outline-none focus:ring focus:ring-emerald-300 focus:ring-opacity-50 ${isUploading ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-200'}`}
             >
-              {isUploading ? uploadProgress : "Zip & Upload to Drive"}
+              {isUploading ? uploadProgress : `Zip & Upload to ${subjectFolder}`}
             </button>
           </div>
         </form>
