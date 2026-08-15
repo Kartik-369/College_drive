@@ -14,14 +14,24 @@ async def life(app:FastAPI):
 app=FastAPI(lifespan=life)
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173,https://college-drive.vercel.app")
-origins = [url.strip() for url in FRONTEND_URL.split(",")]
+origins = [
+    "https://collegedrive-frontend.onrender.com",
+    "http://localhost",
+    "http://localhost:80",
+    "http://localhost:5173",
+    "http://127.0.0.1",
+    "http://127.0.0.1:80",
+    "http://127.0.0.1:5173",
+]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.include_router(user.router)
