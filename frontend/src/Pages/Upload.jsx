@@ -155,7 +155,7 @@ function Upload() {
       });
 
       if (saveResponse.ok) {
-        navigate('/predict');
+        navigate('/dashboard');
       } else {
         throw new Error("Failed to save file metadata");
       }
