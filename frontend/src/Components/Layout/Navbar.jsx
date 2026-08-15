@@ -28,12 +28,8 @@ function Navbar() {
     
     navigate('/');
   }
-  const handleCheckUpload=()=>{
-    const Uploaded=localStorage.getItem('hasUploaded')
-    if (Uploaded=="true") {
-      navigate('/predict')
-    }
-    else navigate('/upload')
+  const handleCheckUpload = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -49,9 +45,9 @@ function Navbar() {
           </span>
         </Link>
 
-        <div className="hidden absolute font-bold left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center min-[1100px]:flex space-x-2 lg:space-x-6 text-xl font-serif tracking-wider">
+        <div className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center min-[1100px]:flex space-x-2 lg:space-x-6 text-sm font-semibold text-slate-700 tracking-wider">
           <div className="group relative">
-            <Button href="#howitworks" color="inherit" className="text-black px-3 py-2 border-b-2 border-transparent group-hover:border-black group-hover:-translate-y-1 !transition-all duration-200 ease-in-out normal-case">How it Works</Button>
+            <a href="/#howitworks" className="text-slate-600 px-3 py-2 border-b-2 border-transparent hover:text-blue-600 transition-colors">How it Works</a>
           </div>
         </div>
 
@@ -96,7 +92,7 @@ function Navbar() {
           
           <ul className="flex flex-col space-y-3 p-6 text-sm font-semibold text-slate-700">
               <li className="border-b border-slate-100 pb-3">
-                <Button href="#howitworks" onClick={() => setOpen(false)} fullWidth color="inherit" className="!justify-start !px-3 !py-2 !text-inherit !normal-case">How it Works</Button>
+                <a href="/#howitworks" onClick={() => setOpen(false)} className="block w-full text-left px-3 py-2 text-slate-600 hover:text-blue-600">How it Works</a>
               </li>
           </ul>
 
