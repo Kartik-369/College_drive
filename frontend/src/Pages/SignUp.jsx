@@ -46,7 +46,7 @@ function SignUp(){
             localStorage.setItem('userEmail', email);
             alert('Login successful!');
             window.dispatchEvent(new Event('authChange'));
-            navigate('/predict');
+            navigate('/dashboard');
           } else {
             alert('Registered! Please Sign In.');
             isLogin(true);
@@ -72,7 +72,7 @@ function SignUp(){
   //           localStorage.setItem('token', data.access_token);
   //           alert('Login successful!');
   //           window.dispatchEvent(new Event('authChange'));
-  //           navigate('/predict');
+  //           navigate('/dashboard');
   //       } else {
   //           alert('Auth Failed');
   //       }
