@@ -32,35 +32,57 @@ export default function Forgot() {
     }
   };
   return (
-    <section className="bg-white">
-      <div className="flex items-center justify-center min-h-[100dvh] px-4 py-8 mx-auto w-full">
-        <form onSubmit={handleForgot} className="w-full max-w-md flex flex-col gap-5 sm:gap-6 shadow-xl shadow-stone-200/50 border border-stone-200 bg-amber-50/30 p-5 sm:p-7 md:p-9 rounded-2xl sm:rounded-3xl">
-          <div className="flex flex-row justify-between items-center mt-2 md:mt-3 mb-6">
-            <h1 className="text-xl md:text-2xl font-semibold text-gray-800 sm:text-3xl">Reset Password</h1>
-            <button onClick={() => navigate(-1)} className="bg-white text-center w-24 rounded-2xl h-14 relative text-black text-[15px] font-semibold group" type="button">Go Back
-              <div className="bg-amber-100 rounded-xl h-[39px] w-1/3 flex items-center justify-center absolute -left-6 top-[9px] group-hover:w-[120px] group-active:w-[120px] z-10 duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" height="25px" width="25px">
-                  <path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z" fill="#000000"></path>
-                  <path d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z" fill="#000000"></path>
-                </svg>
-              </div>
-            </button>
-          </div>
-          <p className="text-sm sm:text-base text-gray-600">Enter your email address and we'll send you a secure link to reset your password.</p>
+    <section className="bg-slate-50 font-sans min-h-screen flex items-center justify-center pt-20 pb-12 px-4 sm:px-6">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden">
+        
+        <div className="bg-slate-50/50 border-b border-slate-100 px-8 py-5 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+            Reset Password
+          </h1>
+          <button 
+            onClick={() => navigate(-1)}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            type="button"
+            title="Go Back"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleForgot} className="p-8">
+          <p className="text-sm text-slate-600 mb-6">Enter your email address and we'll send you a secure link to reset your password.</p>
+          
           {message && (
-            <div className={`p-3 sm:p-4 text-sm rounded-lg transition-all ${isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+            <div className={`p-4 mb-6 text-sm rounded-lg border ${isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
               {message}
             </div>
           )}
-          <div className="relative flex items-center">
-            <span className="absolute left-3 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </span>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus required className="block w-full py-3.5 pl-11 pr-4 text-sm sm:text-base text-gray-700 bg-white border border-stone-200 rounded-xl focus:border-amber-400 focus:ring-amber-200 focus:outline-none focus:ring focus:ring-opacity-40 transition-all" placeholder="Email address" />
+
+          <div className="mb-6 relative">
+            <label className="block mb-2 text-sm font-semibold text-slate-700">Email Address</label>
+            <div className="relative flex items-center">
+              <span className="absolute left-3 flex items-center justify-center">
+                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                autoFocus 
+                required 
+                className="block w-full py-2.5 pl-10 pr-4 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all" 
+                placeholder="you@college.edu" 
+              />
+            </div>
           </div>
-          <button type="submit" disabled={isSubmitting} className={`w-full py-3.5 sm:py-4 mt-2 text-sm sm:text-base font-medium tracking-wide text-white rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-opacity-50 active:scale-[0.98] ${isSubmitting ? "bg-stone-400 cursor-not-allowed" : "bg-stone-800 hover:bg-emerald-600 focus:ring-emerald-300 shadow-md hover:shadow-lg"}`}>
+
+          <button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className={`w-full py-2.5 px-4 text-sm font-semibold text-white transition-all bg-blue-600 rounded-lg shadow-sm active:scale-[0.98] ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700 hover:shadow"}`}
+          >
             {isSubmitting ? 'Sending...' : hasSent ? 'Resend Reset Link' : 'Send Reset Link'}
           </button>
         </form>

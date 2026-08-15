@@ -1,145 +1,120 @@
-import { useRef } from "react";
-import { useLayoutEffect } from 'react'
-import gsap from 'gsap'
-import myHero from "../assets/Dash.png"; // Replace with an appropriate college/drive image if needed
-import {Button} from '@mui/material';
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link, useNavigate } from "react-router-dom";
-
-gsap.registerPlugin(ScrollTrigger)
 
 function Home(){
   const navigate = useNavigate();
-  const containerRef = useRef(null);
-  const heroImageRef = useRef(null)
   
   const handleStartUploading = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      navigate('/upload');
+      navigate('/predict'); // Dashboard is mapped to /predict in App.jsx
     } else {
       navigate('/signup');
     }
   };
-  
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      
-      const isMobile = window.innerWidth < 640;
-      gsap.to(heroImageRef.current, {
-        y: -30,
-        ease:'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 90%',
-          end: isMobile ? 'bottom 60%' : 'bottom 90%',
-          scrub: 1,
-        }
-      })
-
-    }, containerRef)
-
-    return () => ctx.revert()
-  }, [])
-  
 
   const logos=[
     {name:'React',src:'https://img.icons8.com/?size=100&id=N3G7bBnphi53&format=png&color=000000'},
     {name:'FastAPI',src:'https://icon.icepanel.io/Technology/svg/FastAPI.svg'},
     {name:'MongoDB',src:'https://cdn.iconscout.com/icon/free/png-512/free-mongodb-icon-svg-download-png-1175138.png?f=webp&w=256'},
-    {name:'Backblaze',src:'https://upload.wikimedia.org/wikipedia/commons/e/e0/Backblaze_Logo_2020.svg'}
+    { name: 'Backblaze', src: 'https://companieslogo.com/img/orig/BLZE-8ebde572.svg' },
+    { name: 'Docker', src: 'https://img.icons8.com/?size=100&id=Wln8Z3PcXanx&format=png&color=000000' },
+    { name: 'Kubernetes', src: 'https://img.icons8.com/?size=100&id=cvzmaEA4kC0o&format=png&color=000000' }
   ]
-  return (<>
-    <div className="w-full overflow-x-hidden h-full pt-9">
-    
-      <div className="flex flex-col gap-12 max-[1100px]:gap-2.25 overflow-hidden justify-center items-center text-center px-4">
-        <span className="text-5xl md:text-[72px] p-6 mt-12 md:mt-24 max-[1100px]:mt-16 font-roslindale font-extrabold">Never Lose an Assignment.</span>
+
+  return (
+    <div className="w-full bg-slate-50 min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
+      
+      {/* Centered Hero Section */}
+      <div className="pt-24 lg:pt-40 pb-20 px-6 lg:px-8 max-w-4xl mx-auto flex flex-col items-center text-center gap-8 z-10">
         
-        <p className=" text-gray-600 max-w-2xl font-semibold lg:text-2xl text-[16px] p-6"><span className="font-bold text-gray-900 underline decoration-emerald-500 underline-offset-4">
-            College Drive
-          </span>{" "}is your secure, blazing fast, zero-hassle cloud storage. Drag, drop, zip, and submit instantly.</p>
-        <div className="flex max-[1100px]:flex-col max-[1100px]:space-y-3 p-3 px-auto justify-center items-center flex-row mt-auto gap-6 lg:text-xl lg:tracking-wider lg:font-light">
-            <Link to='https://github.com/Kartik-369/CollegeDrive'><Button className=" !rounded-4xl !bg-stone-800 !text-white !px-9 !py-2 hover:!bg-black transition">View Github</Button></Link>
-            <Button onClick={handleStartUploading} className=" !rounded-4xl !bg-white !text-black !border-[1.5px] !px-9 !py-2 hover:!bg-black hover:!text-white transition">Start Uploading</Button>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 font-medium text-sm border border-blue-200">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+          Secure Cloud Storage for Students
+        </div>
+        
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+          Your assignments, <br className="hidden md:block"/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">safely stored.</span>
+        </h1>
+        
+        <p className="text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed">
+          College Drive provides secure, blazing-fast cloud storage for your academic work. Upload directly to the cloud with zero server bottlenecks.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6 w-full sm:w-auto">
+          <button 
+            onClick={handleStartUploading} 
+            className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 text-lg"
+          >
+            Go to Drive
+          </button>
+          <Link to="https://github.com/Kartik-369/CollegeDrive" className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold rounded-xl shadow-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 text-lg">
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path></svg>
+            View GitHub
+          </Link>
         </div>
       </div>
-      
-      <div className="py-12 h-auto flex items-center max-[1100px]:flex-col max-[1100px]:gap-3 px-4">
-        <p className="text-center flex-1 text-gray-700 text-2xl max-[1130px]:text-lg font-semibold tracking-wider uppercase ">Built with Modern Standards</p>
-      
-        <div className="flex flex-1 flex-wrap justify-center items-center gap-3 opacity-60">
-          {logos.map((logo,index)=>
-            <img src={logo.src} key={index} className="h-9 md:h-18 w-auto"/>)}
-        </div>
-      </div>
-      
-      <div ref={containerRef} className="h-auto relative w-full py-12 lg:py-0 overflow-hidden">
-        <div className="relative w-full flex flex-col justify-center items-center">
-          
-          <div className="absolute inset-0 min-[1130px]:relative z-0 flex justify-center items-center overflow-hidden">
-            <img 
-              ref={heroImageRef} 
-              className="h-auto min-[1130px]:h-full md:max-w-4xl object-contain scale-110 min-[1130px]:scale-100 rounded-2xl shadow-2xl" 
-              src={myHero} 
-              alt="Dashboard Preview"
-            />
-          </div>
-      
-          <div className="relative min-[1130px]:absolute min-[1130px]:inset-0 z-30 flex flex-col justify-center items-center gap-6 min-[1130px]:block pointer-events-none w-full">
-            
-            <div className="pointer-events-auto flex items-center justify-center max-[1130px]:bg-black/25 gap-2 bg-black/40 text-white font-semibold backdrop-blur-md rounded-2xl border border-white/10 p-[13.2px] min-[1130px]:p-4.5 max-[768px]:w-[72%] min-[1130px]:absolute min-[1130px]:top-[15%] min-[1130px]:left-[12%]">
-              <span className="text-sm md:text-3xl">React UI</span>
-            </div>
-      
-            <div className="pointer-events-auto flex max-[1130px]:bg-black/25 items-center justify-center gap-2 bg-black/40 text-white font-semibold backdrop-blur-md rounded-2xl border border-white/10 p-[13.2px] min-[1130px]:p-4 max-[768px]:w-[72%] min-[1130px]:absolute min-[1130px]:bottom-[20%] min-[1130px]:left-[15%]">
-              <span className="text-sm md:text-3xl">MongoDB Atlas</span>
-            </div>
-      
-            <div className="pointer-events-auto flex max-[1130px]:bg-black/25 items-center justify-center gap-2 bg-black/40 text-white font-semibold backdrop-blur-md rounded-2xl border border-white/10 p-[13.2px] min-[1130px]:p-4 max-[768px]:w-[72%] min-[1130px]:absolute min-[1130px]:top-[25%] min-[1130px]:right-[12%]">
-              <span className="text-sm md:text-3xl">FastAPI Engine</span>
-            </div>
-      
-            <div className="pointer-events-auto flex max-[1130px]:bg-black/25 items-center justify-center gap-2 bg-black/40 text-white font-semibold backdrop-blur-md rounded-2xl border border-white/10 p-[13.2px] min-[1130px]:p-4 max-[768px]:w-[72%] min-[1130px]:absolute min-[1130px]:bottom-[25%] min-[1130px]:right-[15%]">
-              <span className="text-sm md:text-3xl">Backblaze B2</span>
-            </div>
-      
+
+      {/* Tech Stack Bar */}
+      <div className="border-y border-slate-200 bg-white py-10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+          <p className="text-md font-bold text-gray-600 uppercase tracking-widest text-center md:text-left">
+            Built on Modern Architecture
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            {logos.map((logo,index)=>
+              <img src={logo.src} key={index} alt={logo.name} className="h-8 md:h-10 w-auto object-contain"/>
+            )}
           </div>
         </div>
       </div>
-      
-      <div className="max-w-6xl mx-auto px-6 py-16 mt-12">
-        <div className="text-center mb-16">
-          <h2 className="text-[54px] font-semibold md:font-normal md:text-7xl font-ogg mb-4 text-slate-900">
-            Inside the Architecture
+
+      {/* Features Grid */}
+      <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            Everything you need in a cloud drive
           </h2>
-          <p className="text-slate-600 md:text-xl text-[18px]">
-            A zero-server-load pipeline demonstrating robust and scalable storage.
+          <p className="text-lg text-slate-600">
+            We stripped away the complexity to give you a blazing fast, secure, and intuitive tool for managing your college coursework.
           </p>
         </div>
       
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gray-300 hover:scale-3d hover:shadow-2xl active:shadow-2xl active:scale-3d transition-all">
-            <div className="text-3xl md:text-5xl font-bold bg-linear-to-br from-teal-600 to-emerald-900 text-transparent bg-clip-text mb-2">01</div>
-            <div className="text-lg font-semibold text-slate-900">Client-Side Zipping</div>
-            <p className="text-slate-500 text-sm mt-2">Filter out junk files like node_modules locally and compile the rest into a ZIP archive entirely within the browser, saving bandwidth.</p>
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Direct Cloud Uploads</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Files bypass the server entirely and upload directly to Backblaze B2 using secure pre-signed URLs, saving massive bandwidth.
+            </p>
           </div>
       
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gray-300 hover:scale-3d hover:shadow-2xl active:shadow-2xl active:scale-3d transition-all">
-            <div className="text-3xl md:text-5xl font-bold bg-linear-to-br from-teal-600 to-emerald-900 text-transparent bg-clip-text mb-2">02</div>
-            <div className="text-lg font-semibold text-slate-900">Pre-Signed Uploads</div>
-            <p className="text-slate-500 text-sm mt-2">The FastAPI backend securely generates a temporary link, allowing the frontend to upload files directly to Backblaze B2 without routing heavy files through the server.</p>
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Client-Side Zipping</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Drop entire folders. We filter out junk files (like node_modules) and zip everything inside your browser before uploading.
+            </p>
           </div>
       
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-gray-300 hover:scale-3d hover:shadow-2xl active:shadow-2xl active:scale-3d transition-all">
-            <div className="text-3xl md:text-5xl font-bold bg-linear-to-br from-teal-600 to-emerald-900  text-transparent bg-clip-text mb-2">03</div>
-            <div className="text-lg font-semibold text-slate-900">Secure Database</div>
-            <p className="text-slate-500 text-sm mt-2">MongoDB efficiently stores file metadata, linking your assignments securely to your authenticated user account for fast retrieval.</p>
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Secure & Private</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Metadata is safely stored in MongoDB. File downloads are fully authenticated and stream directly from the cloud to you.
+            </p>
           </div>
         </div>
       </div>
       
     </div>
-  </>);
+  );
 }
 
 export default Home;

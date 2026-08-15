@@ -7,8 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        bodoni: ['"Libre Bodoni"', 'serif'],
-        script: ['"Great Vibes"', 'cursive'],
+        sans: ['Inter', 'sans-serif'],
       },
     },
   },
