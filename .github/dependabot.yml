@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Check for frontend React/Vite updates
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+
+  # Check for backend Python/FastAPI updates
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
