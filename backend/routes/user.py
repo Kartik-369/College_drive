@@ -102,7 +102,7 @@ async def forgot_password(email:str):
         {'email': email},
         {'$set': {'reset_token': reset_token, 'reset_expiration': expiration}}
     )
-    reset_link = f"https://neuro-business.vercel.app/reset-password?token={reset_token}"
+    reset_link = f"https://collegedrive-frontend.onrender.com/reset-password?token={reset_token}"
     resend_api_key = os.getenv("RESEND_API_KEY")
     headers = {
         "Authorization": f"Bearer {resend_api_key}",
