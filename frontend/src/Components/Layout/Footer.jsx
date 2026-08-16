@@ -30,7 +30,7 @@ function Footer() {
         
         <div className="border-t border-slate-200 pt-8 flex justify-center items-center">
           <p className="text-slate-400 text-xs font-medium">
-            Built as a B2B SaaS Demonstration.
+            This soon will be limited to students of Darshan University.
           </p>
         </div>
       </div>
