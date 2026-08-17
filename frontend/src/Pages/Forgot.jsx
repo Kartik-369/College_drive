@@ -33,9 +33,9 @@ export default function Forgot() {
   };
   return (
     <section className="bg-slate-50 font-sans min-h-screen flex items-center justify-center pt-20 pb-12 px-4 sm:px-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden">
+      <div className="w-full max-w-md bg-white rounded-lg border border-slate-200 overflow-hidden">
         
-        <div className="bg-slate-50/50 border-b border-slate-100 px-8 py-5 flex items-center justify-between">
+        <div className="border-b border-slate-200 px-8 py-5 flex items-center justify-between">
           <h1 className="text-xl font-bold text-slate-800 tracking-tight">
             Reset Password
           </h1>
@@ -81,7 +81,7 @@ export default function Forgot() {
           <button 
             type="submit" 
             disabled={isSubmitting} 
-            className={`w-full py-2.5 px-4 text-sm font-semibold text-white transition-all bg-blue-600 rounded-lg shadow-sm active:scale-[0.98] ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700 hover:shadow"}`}
+            className={`w-full py-2.5 px-4 text-sm font-semibold text-white bg-blue-600 rounded-md transition-colors ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"}`}
           >
             {isSubmitting ? 'Sending...' : hasSent ? 'Resend Reset Link' : 'Send Reset Link'}
           </button>

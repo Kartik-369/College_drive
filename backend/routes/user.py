@@ -91,58 +91,58 @@ async def google_auth(request: GoogleAuthRequest):
         print("Backend Auth Error:", e)
         raise HTTPException(status_code=400,detail='Server error during Google Auth')
 
-@router.post("/forgot-password")
-async def forgot_password(email:str):
-    user = await users_collection.find_one({'email':email})
-    if not user:
-        return {"message": "reset link has been sent."}
-    reset_token = secrets.token_urlsafe(32)
-    expiration = datetime.utcnow()+timedelta(minutes=15)
-    await users_collection.update_one(
-        {'email': email},
-        {'$set': {'reset_token': reset_token, 'reset_expiration': expiration}}
-    )
-    reset_link = f"https://collegedrive-frontend.onrender.com/reset-password?token={reset_token}"
-    resend_api_key = os.getenv("RESEND_API_KEY")
-    headers = {
-        "Authorization": f"Bearer {resend_api_key}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "from": "onboarding@resend.dev", 
-        "to": [email],
-        "subject": "NeuroBusiness: Password Reset",
-        "html": f"<p>Hello,</p><p>Click <a href='{reset_link}'>here</a> to reset your password.</p><p>This link expires in 15 minutes.</p>"
-    }
-    try:
-        response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
-        response.raise_for_status() 
-    except Exception as e:
-        print(f"Resend API Error: {e}")
-        if 'response' in locals():
-            print(f"Resend Details: {response.text}")
-        raise HTTPException(status_code=500, detail="Failed to send email")
-    return {"message":"reset link has been sent."}
+# @router.post("/forgot-password")
+# async def forgot_password(email:str):
+#     user = await users_collection.find_one({'email':email})
+#     if not user:
+#         return {"message": "reset link has been sent."}
+#     reset_token = secrets.token_urlsafe(32)
+#     expiration = datetime.utcnow()+timedelta(minutes=15)
+#     await users_collection.update_one(
+#         {'email': email},
+#         {'$set': {'reset_token': reset_token, 'reset_expiration': expiration}}
+#     )
+#     reset_link = f"https://collegedrive-frontend.onrender.com/reset-password?token={reset_token}"
+#     resend_api_key = os.getenv("RESEND_API_KEY")
+#     headers = {
+#         "Authorization": f"Bearer {resend_api_key}",
+#         "Content-Type": "application/json"
+#     }
+#     payload = {
+#         "from": "onboarding@resend.dev", 
+#         "to": [email],
+#         "subject": "NeuroBusiness: Password Reset",
+#         "html": f"<p>Hello,</p><p>Click <a href='{reset_link}'>here</a> to reset your password.</p><p>This link expires in 15 minutes.</p>"
+#     }
+#     try:
+#         response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
+#         response.raise_for_status() 
+#     except Exception as e:
+#         print(f"Resend API Error: {e}")
+#         if 'response' in locals():
+#             print(f"Resend Details: {response.text}")
+#         raise HTTPException(status_code=500, detail="Failed to send email")
+#     return {"message":"reset link has been sent."}
 
 
-class PasswordReset(BaseModel):
-    token: str
-    new_password: str
+# class PasswordReset(BaseModel):
+#     token: str
+#     new_password: str
 
-@router.post("/reset-password")
-async def reset_password(data:PasswordReset):
-    user = await users_collection.find_one({
-        'reset_token':data.token,
-        'reset_expiration':{'$gt':datetime.utcnow()}
-    })
-    if not user:
-        raise HTTPException(status_code=400,detail="expired token.")
-    hashed_password=pwd_context.hash(data.new_password)
-    await users_collection.update_one(
-        {'_id': user['_id']},
-        {
-            '$set': {'password': hashed_password},
-            '$unset': {'reset_token':"",'reset_expiration':""}
-        }
-    )
-    return {"message": "successfully reset."}
+# @router.post("/reset-password")
+# async def reset_password(data:PasswordReset):
+#     user = await users_collection.find_one({
+#         'reset_token':data.token,
+#         'reset_expiration':{'$gt':datetime.utcnow()}
+#     })
+#     if not user:
+#         raise HTTPException(status_code=400,detail="expired token.")
+#     hashed_password=pwd_context.hash(data.new_password)
+#     await users_collection.update_one(
+#         {'_id': user['_id']},
+#         {
+#             '$set': {'password': hashed_password},
+#             '$unset': {'reset_token':"",'reset_expiration':""}
+#         }
+#     )
+#     return {"message": "successfully reset."}

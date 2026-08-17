@@ -6,7 +6,7 @@ It all started in the computer lab when a classmate got her pen drive completely
 
 I realized I could take all the full-stack, cloud, and DevOps skills I had been building and apply them to solve this exact, everyday problem.
 
-So, I built **CollegeDrive**—a dedicated cloud storage platform engineered strictly for **Darshan University** students. Instead of passing around flash drives, students can create accounts (restricted by university email), organize their subjects into folders, and securely upload their work (specifically optimized for `.zip` lab submissions). It's like Google Drive, but hyper-local to our campus and built from scratch using a modern containerized microservice architecture.
+So, I built **LabZip**—a dedicated cloud storage platform engineered strictly for **Darshan University** students. Instead of passing around flash drives, students can create accounts (restricted by university email), organize their subjects into folders, and securely upload their work (specifically optimized for `.zip` lab submissions). It's like Google Drive, but hyper-local to our campus and built from scratch using a modern containerized microservice architecture.
 
 ---
 
@@ -21,7 +21,7 @@ So, I built **CollegeDrive**—a dedicated cloud storage platform engineered str
 
 ## 🛠️ The Tech Stack
 
-CollegeDrive was built to mirror modern industry standards, moving away from monolithic designs into a scalable microservice architecture.
+LabZip was built to mirror modern industry standards, moving away from monolithic designs into a scalable microservice architecture.
 
 - **Frontend:** React, Vite, TailwindCSS
 - **Backend:** FastAPI, Python 3.11, Uvicorn, Pydantic
@@ -70,7 +70,7 @@ The project includes fully declared Kubernetes manifests designed for a producti
 
 ## 💻 Local Development Setup
 
-Want to run CollegeDrive locally?
+Want to run LabZip locally?
 
 ### 1. Environment Variables
 

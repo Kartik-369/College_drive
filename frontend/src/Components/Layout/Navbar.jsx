@@ -34,13 +34,13 @@ function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 justify-between px-6 py-3 items-center flex shadow-sm max-w-full font-sans transition-all">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white border-b border-slate-200 justify-between px-6 py-3 items-center flex max-w-full font-sans">
         
         <Link to='/' className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center shrink-0">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+          <div className="w-7 h-7 bg-blue-600 text-white rounded-md flex items-center justify-center shrink-0">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
           </div>
-          <span className="text-xl font-bold text-slate-800 tracking-tight shrink-0 z-10 hidden sm:block">
+          <span className="text-lg font-bold text-slate-800 tracking-tight shrink-0 z-10 hidden sm:block">
             LabZip
           </span>
         </Link>

@@ -155,7 +155,7 @@ export default function Dashboard() {
         
         {/* Sidebar / Folders */}
         <aside className="hidden md:flex flex-col w-64 shrink-0">
-          <button onClick={handleNewUpload} className="mb-8 flex items-center justify-center gap-2 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 shadow-sm px-4 py-3 rounded-xl font-semibold transition-all">
+          <button onClick={handleNewUpload} className="mb-8 flex items-center justify-center gap-2 w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 px-4 py-3 rounded-md font-medium text-sm transition-colors">
             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
             New Upload
           </button>
@@ -180,7 +180,7 @@ export default function Dashboard() {
           
           {/* Mobile Actions & Folder Tabs */}
           <div className="md:hidden flex flex-col gap-4 mb-6">
-            <button onClick={handleNewUpload} className="flex items-center justify-center gap-2 w-full bg-white border border-slate-200 text-slate-800 shadow-sm px-4 py-3 rounded-xl font-semibold">
+            <button onClick={handleNewUpload} className="flex items-center justify-center gap-2 w-full bg-white border border-slate-200 text-slate-800 px-4 py-3 rounded-md font-medium text-sm">
               <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
               New Upload
             </button>
@@ -206,7 +206,7 @@ export default function Dashboard() {
           </div>
 
           {apiError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-start gap-3">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm flex items-start gap-3">
               <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               <div>
                 <p className="font-semibold">Error Loading Drive</p>
@@ -216,7 +216,7 @@ export default function Dashboard() {
           )}
 
           {displayedFiles.length === 0 ? (
-            <div className="w-full bg-white border border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center py-20 px-4 text-center">
+            <div className="w-full bg-white border border-dashed border-slate-300 rounded-lg flex flex-col items-center justify-center py-20 px-4 text-center">
               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
               </div>
@@ -229,7 +229,7 @@ export default function Dashboard() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {displayedFiles.map((file) => (
-                <div key={file._id} className="bg-white p-4 rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm transition-all group flex flex-col">
+                <div key={file._id} className="bg-white p-4 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors group flex flex-col">
                   
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center shrink-0">

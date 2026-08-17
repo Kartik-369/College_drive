@@ -174,11 +174,11 @@ function Upload() {
   };
 
   return (
-    <section className="bg-slate-50 min-h-screen flex items-center justify-center font-sans px-4 sm:px-6">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden">
+    <section className="bg-slate-50 min-h-screen flex items-center justify-center font-sans px-4 sm:px-6 pt-20 pb-12">
+      <div className="w-full max-w-2xl bg-white rounded-lg border border-slate-200 overflow-hidden">
         
         {/* Header */}
-        <div className="bg-slate-50/50 border-b border-slate-100 px-8 py-5 flex items-center justify-between">
+        <div className="border-b border-slate-200 px-8 py-5 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-slate-800">
               Upload to {subjectFolder}
@@ -259,7 +259,7 @@ function Upload() {
             <button
               onClick={handleUpload}
               disabled={isUploading || selectedFiles.length === 0 || !projectName}
-              className={`flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${isUploading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'}`}
+              className={`flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white rounded-md transition-colors ${isUploading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'}`}
             >
               {isUploading && (
                 <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
