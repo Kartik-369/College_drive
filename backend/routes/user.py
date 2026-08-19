@@ -1,7 +1,10 @@
 from email.message import EmailMessage
+import re
 import smtplib
-from fastapi import APIRouter, HTTPException, Depends
 from passlib.context import CryptContext
+from fastapi import APIRouter, Request, HTTPException, Depends
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from models import User
 from dotenv import load_dotenv
 import os
@@ -22,22 +25,28 @@ SENDER_PASSWORD=os.getenv("SENDER_PASSWORD")
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 oauth2_scheme=OAuth2PasswordBearer(tokenUrl="auth/login")
 router=APIRouter()
+limiter = Limiter(key_func=get_remote_address)
+
 class GoogleAuthRequest(BaseModel):
     token:str
-pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto",bcrypt__rounds=9)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 
 @router.post("/register")
-async def register(user:User):
+@limiter.limit("5/minute")
+async def register(request: Request, user: User):
+    # if not user_data.email.endswith("@darshan.ac.in"):
+             # raise HTTPException(status_code=403, detail="Only Darshan University emails are allowed.")
     user_exists=await users_collection.find_one({'email':user.email})
     if user_exists:
-        raise HTTPException(status_code=400, detail="Email already in use")
+        return {"message": "If the email is valid, an account has been created."}
     user.password=pwd_context.hash(user.password)
     user_dict=user.model_dump()
     await users_collection.insert_one(user_dict)
-    return {'message':'Registered successfully'}
+    return {"message": "If the email is valid, an account has been created."}
 
 @router.post("/login")
-async def login(data:OAuth2PasswordRequestForm=Depends()):
+@limiter.limit("5/minute")
+async def login(request: Request, data: OAuth2PasswordRequestForm = Depends()):
     valid_user=await auth_user(data.username, data.password)   
     if not valid_user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
