@@ -7,12 +7,16 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
       - uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           pr-message: |
+<<<<<<< HEAD
             Hey there! 👋 Thank you so much for contributing to LabZip!
+=======
+            Hey there! 👋 Thank you so much for contributing to LabZip! 
+>>>>>>> 1778bee986e3a85c1ffc1620e03a57e5411dc197
             As a student-focused project, every contribution means a lot. A maintainer will review your code shortly.
