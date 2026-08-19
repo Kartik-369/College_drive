@@ -3,31 +3,38 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database import db_connec
 from routes import user
-from fastapi.middleware.cors import CORSMiddleware
 from routes import files
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
+# DB connection
 @asynccontextmanager
-async def life(app:FastAPI):
-	await db_connec()
-	yield
+async def life(app: FastAPI):
+    await db_connec()
+    print("Database connected")
+    yield
 
-app=FastAPI(lifespan=life)
+# Initialize Rate Limiter
+limiter = Limiter(key_func=get_remote_address)
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173,https://college-drive.vercel.app")
+# Pass the lifespan to FastAPI
+app = FastAPI(lifespan=life)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Secure CORS (No wildcard regex, strictly defined origins)
 origins = [
     "https://collegedrive-frontend.onrender.com",
-    "http://localhost",
-    "http://localhost:80",
     "http://localhost:5173",
-    "http://127.0.0.1",
-    "http://127.0.0.1:80",
     "http://127.0.0.1:5173",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,4 +46,4 @@ app.include_router(files.router)
 
 @app.get('/')
 def home():
-	return {'hello'}
+    return {'message': 'LabZip running!'}
