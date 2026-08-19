@@ -1,3 +1,4 @@
+from models import FileSaveRequest, PreSignRequest
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -8,7 +9,7 @@ import os
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from routes.user import oauth2_scheme
+from routes.user import oauth2_scheme, verify_token
 from database import files_collection
 from bson.objectid import ObjectId
 import urllib.parse
@@ -26,34 +27,34 @@ s3_client = boto3.client(
 )
 BUCKET_NAME = os.getenv("B2_BUCKET_NAME")
 
-class PreSignRequest(BaseModel):
-    file_name: str
-    content_type: str
-    size: int
-
-class FileSaveRequest(BaseModel):
-    file_name: str
-    size: int
-    cloud_storage_url: str
-    subject_folder: str
-    object_key: str
-
 @router.post('/files/presign')
 async def generate_presigned_url(request: PreSignRequest, token: str = Depends(oauth2_scheme)):
-    try:
-        unique_filename = f"{uuid.uuid4()}_{request.file_name}"
+    user = await verify_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
+    max_size = 15 * 1024 * 1024 
+    if request.size > max_size:
+        raise HTTPException(status_code=400, detail="File exceeds the 15MB limit.")
+
+    allowed_types = ["application/zip", "application/x-zip-compressed"]
+    if request.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Only .zip files are permitted.")
+
+    file_key = f"{request.folder_name}/{request.file_name}"
+
+    try:
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
             Params={
                 'Bucket': BUCKET_NAME,
-                'Key': unique_filename,
+                'Key': file_key,
                 'ContentType': request.content_type
             },
-            ExpiresIn=900 
+            ExpiresIn=3600 
         )
 
-        return {"upload_url": presigned_url, "file_path": unique_filename}
+        return {"upload_url": presigned_url, "file_key": file_key}
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
@@ -65,7 +66,7 @@ async def save_file_metadata(request: FileSaveRequest, token: str = Depends(oaut
     user = await verify_token(token)
     if not user:
          raise HTTPException(status_code=401, detail="Invalid token")
-
+    print(f"Received FileSaveRequest: {request.dict()}")
     file_doc = {
         "user_email": user.get('email'),
         "file_name": request.file_name,
@@ -140,7 +141,8 @@ async def delete_file(file_id: str, token: str = Depends(oauth2_scheme)):
         
         obj_key = file_doc.get("object_key")
         if not obj_key and file_doc.get("cloud_storage_url"):
-             obj_key = urllib.parse.unquote(file_doc["cloud_storage_url"].split('/')[-1])
+            cloud_url = urllib.parse.unquote(file_doc["cloud_storage_url"])
+            obj_key = cloud_url.split(f"{BUCKET_NAME}/")[-1]
         
         if obj_key:
              try:
@@ -183,14 +185,14 @@ async def download_file_stream(file_id: str, token: str = Depends(oauth2_scheme)
 
     try:
         s3_response = s3_client.get_object(Bucket=BUCKET_NAME, Key=obj_key)
-        # Read entire file into memory — safe because uploads are capped at 15MB
+        # Read entire file into memory
         file_bytes = s3_response['Body'].read()
 
         safe_name = file_doc.get("file_name", "download.zip")
         if not safe_name.endswith(".zip"):
             safe_name += ".zip"
 
-        # Fix existing ZIPs that have "./" prefixed paths (Windows Explorer rejects these)
+        # Fix existing ZIPs that have "./" prefixed paths
         import zipfile
         import io
         try:
@@ -220,55 +222,3 @@ async def download_file_stream(file_id: str, token: str = Depends(oauth2_scheme)
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"S3 Retrieval Error: {str(e)}")
-
-
-# ============================================================
-# TEMPORARY DEBUG ENDPOINT — remove after testing
-# Visit http://localhost:8000/test-download directly in browser
-# This bypasses ALL JavaScript, ALL CORS, ALL auth
-# ============================================================
-@router.get('/test-download')
-async def test_download():
-    from fastapi import Response
-    import zipfile as zf_module
-    import io as io_module
-
-    # Dynamically find the latest object in B2
-    try:
-        listing = s3_client.list_objects_v2(Bucket=BUCKET_NAME)
-        if 'Contents' not in listing or len(listing['Contents']) == 0:
-            return {"error": "Bucket is empty"}
-        test_key = listing['Contents'][-1]['Key']
-    except Exception as e:
-        return {"error": f"Failed to list bucket: {str(e)}"}
-
-    try:
-        s3_response = s3_client.get_object(Bucket=BUCKET_NAME, Key=test_key)
-        file_bytes = s3_response['Body'].read()
-
-        # Repack to strip ./ prefixes
-        try:
-            buf = io_module.BytesIO(file_bytes)
-            with zf_module.ZipFile(buf, 'r') as zin:
-                if any(n.startswith('./') for n in zin.namelist()):
-                    clean_buf = io_module.BytesIO()
-                    with zf_module.ZipFile(clean_buf, 'w', zf_module.ZIP_DEFLATED) as zout:
-                        for item in zin.namelist():
-                            clean_name = item.lstrip('./')
-                            if not clean_name:
-                                continue
-                            zout.writestr(clean_name, zin.read(item))
-                    file_bytes = clean_buf.getvalue()
-        except zf_module.BadZipFile:
-            pass
-
-        return Response(
-            content=file_bytes,
-            media_type="application/octet-stream",
-            headers={
-                "Content-Disposition": f'attachment; filename="test_download.zip"',
-                "Content-Length": str(len(file_bytes)),
-            }
-        )
-    except Exception as e:
-        return {"error": str(e)}
