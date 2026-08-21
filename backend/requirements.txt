@@ -4,7 +4,7 @@ python-dotenv
 requests
 python-jose[cryptography]
 passlib==1.7.4
-bcrypt==3.2.2
+bcrypt==5.0.0
 pymongo
 motor
 boto3
