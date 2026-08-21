@@ -1,10 +1,24 @@
-# 1. Backend Deployment & Service
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secrets
+type: Opaque
+stringData: # write plaintext here, Kubernetes base64 encodes it automatically
+  MONGODB_URL: "your_mongodb_connection_string"
+  B2_KEY_ID: "your_b2_key"
+  B2_APPLICATION_KEY: "your_b2_app_key"
+  B2_BUCKET_NAME: "CollegeDrive"
+  B2_ENDPOINT_URL: "Your Backblaze B2 endpoint URL"
+  SECRET_KEY: "your_jwt_secret"
+
+---
+# 2. Backend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: collegedrive-backend
 spec:
-  replicas: 2 # Run two copies of backend for balancing load
+  replicas: 2
   selector:
     matchLabels:
       app: collegedrive-backend
@@ -18,21 +32,12 @@ spec:
         image: kmlop/collegedrive-backend:v1
         ports:
         - containerPort: 8000
-        env:
-        - name: MONGODB_URL
-          value: "your_mongodb_connection_string"
-        - name: B2_KEY_ID
-          value: "your_b2_key"
-        - name: B2_APPLICATION_KEY
-          value: "your_b2_app_key"
-        - name: B2_BUCKET_NAME
-          value: "CollegeDrive"
-        - name: B2_ENDPOINT_URL
-          value: "Your Backblaze B2 endpoint URL"
-        - name: SECRET_KEY
-          value: "your_jwt_secret"
+        envFrom:
+        - secretRef:
+            name: backend-secrets # securely loads all the keys
 
 ---
+# 3. Backend Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -44,40 +49,4 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-  type: ClusterIP #secure backend
-
----
-# 2. Frontend Deployment & Service
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: collegedrive-frontend
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: collegedrive-frontend
-  template:
-    metadata:
-      labels:
-        app: collegedrive-frontend
-    spec:
-      containers:
-      - name: frontend
-        image: kmlop/collegedrive-frontend:v1
-        ports:
-        - containerPort: 80
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  selector:
-    app: collegedrive-frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer # Exposes the frontend
+  type: ClusterIP

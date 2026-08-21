@@ -8,6 +8,7 @@ bcrypt==3.2.2
 pymongo
 motor
 boto3
+slowapi
 python-multipart
 email-validator
 firebase-admin
