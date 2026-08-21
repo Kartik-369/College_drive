@@ -6,21 +6,21 @@ import { useEffect } from "react";
 function Navbar() {
   const [isOpen, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [token,setToken] = useState(localStorage.getItem('token'));
-  const [userEmail,setUserEmail] = useState(localStorage.getItem('userEmail'));
+  const [token,setToken] = useState(sessionStorage.getItem('token'));
+  const [userEmail,setUserEmail] = useState(sessionStorage.getItem('userEmail'));
 
   useEffect(() => {
     const handleAuthChange=()=>{
-      setToken(localStorage.getItem('token'));
-      setUserEmail(localStorage.getItem('userEmail'));
+      setToken(sessionStorage.getItem('token'));
+      setUserEmail(sessionStorage.getItem('userEmail'));
     };
     window.addEventListener('authChange', handleAuthChange);
     return()=>window.removeEventListener('authChange', handleAuthChange);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userEmail')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('userEmail')
     setToken(null)
     setUserEmail(null)
     

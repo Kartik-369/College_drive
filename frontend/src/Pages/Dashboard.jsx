@@ -15,7 +15,7 @@ export default function Dashboard() {
   }, []);
 
   const fetchFiles = async () => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       navigate('/');
       return;
@@ -32,7 +32,7 @@ export default function Dashboard() {
       });
 
       if (response.status === 401) {
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         navigate('/');
         return;
       }
@@ -58,7 +58,7 @@ export default function Dashboard() {
     e.stopPropagation();
     if (!window.confirm("Delete this file permanently from cloud storage?")) return;
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/files/${fileId}`, {
         method: 'DELETE',
@@ -78,7 +78,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     navigate('/');
   };
 
@@ -100,7 +100,7 @@ export default function Dashboard() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/files/${fileId}/download`, {
         method: "GET",

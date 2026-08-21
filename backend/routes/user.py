@@ -11,6 +11,7 @@ import os
 import secrets
 import requests
 from database import users_collection
+from pymongo.errors import DuplicateKeyError
 from pydantic import BaseModel
 from routes.user_verfiy_login import auth_user
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -34,21 +35,24 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds
 @router.post("/register")
 @limiter.limit("5/minute")
 async def register(request: Request, user: User):
-    # if not user_data.email.endswith("@darshan.ac.in"):
-             # raise HTTPException(status_code=403, detail="Only Darshan University emails are allowed.")
     user_exists=await users_collection.find_one({'email':user.email})
     if user_exists:
-        return {"message": "If the email is valid, an account has been created."}
+        raise HTTPException(status_code=400, detail="Account already exists or email in use")
     user.password=pwd_context.hash(user.password)
     user_dict=user.model_dump()
-    await users_collection.insert_one(user_dict)
-    return {"message": "If the email is valid, an account has been created."}
+    try:
+        await users_collection.insert_one(user_dict)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=400, detail="Account already exists or email in use")
+    return {"message": "Registered! Please log in."}
 
 @router.post("/login")
 @limiter.limit("5/minute")
 async def login(request: Request, data: OAuth2PasswordRequestForm = Depends()):
-    valid_user=await auth_user(data.username, data.password)   
-    if not valid_user:
+    auth_status = await auth_user(data.username, data.password)   
+    if auth_status == "NOT_FOUND":
+        raise HTTPException(status_code=404, detail="Account does not exist, please register first")
+    elif auth_status == "INVALID_PASSWORD":
         raise HTTPException(status_code=400, detail="Invalid credentials")
     token=create_access_token({'sub':data.username})
     return {"access_token": token,'token_type':'bearer','message':'Logged in successfully'}
@@ -100,58 +104,58 @@ async def google_auth(request: GoogleAuthRequest):
         print("Backend Auth Error:", e)
         raise HTTPException(status_code=400,detail='Server error during Google Auth')
 
-# @router.post("/forgot-password")
-# async def forgot_password(email:str):
-#     user = await users_collection.find_one({'email':email})
-#     if not user:
-#         return {"message": "reset link has been sent."}
-#     reset_token = secrets.token_urlsafe(32)
-#     expiration = datetime.utcnow()+timedelta(minutes=15)
-#     await users_collection.update_one(
-#         {'email': email},
-#         {'$set': {'reset_token': reset_token, 'reset_expiration': expiration}}
-#     )
-#     reset_link = f"https://collegedrive-frontend.onrender.com/reset-password?token={reset_token}"
-#     resend_api_key = os.getenv("RESEND_API_KEY")
-#     headers = {
-#         "Authorization": f"Bearer {resend_api_key}",
-#         "Content-Type": "application/json"
-#     }
-#     payload = {
-#         "from": "onboarding@resend.dev", 
-#         "to": [email],
-#         "subject": "NeuroBusiness: Password Reset",
-#         "html": f"<p>Hello,</p><p>Click <a href='{reset_link}'>here</a> to reset your password.</p><p>This link expires in 15 minutes.</p>"
-#     }
-#     try:
-#         response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
-#         response.raise_for_status() 
-#     except Exception as e:
-#         print(f"Resend API Error: {e}")
-#         if 'response' in locals():
-#             print(f"Resend Details: {response.text}")
-#         raise HTTPException(status_code=500, detail="Failed to send email")
-#     return {"message":"reset link has been sent."}
+@router.post("/forgot-password")
+async def forgot_password(email:str):
+    user = await users_collection.find_one({'email':email})
+    if not user:
+        return {"message": "reset link has been sent."}
+    reset_token = secrets.token_urlsafe(32)
+    expiration = datetime.utcnow()+timedelta(minutes=15)
+    await users_collection.update_one(
+        {'email': email},
+        {'$set': {'reset_token': reset_token, 'reset_expiration': expiration}}
+    )
+    reset_link = f"https://collegedrive-frontend.onrender.com/reset-password?token={reset_token}"
+    resend_api_key = os.getenv("RESEND_API_KEY")
+    headers = {
+        "Authorization": f"Bearer {resend_api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from": "onboarding@resend.dev", 
+        "to": [email],
+        "subject": "College Drive: Password Reset",
+        "html": f"<p>Hello,</p><p>Click <a href='{reset_link}'>here</a> to reset your College Drive password.</p><p>This link expires in 15 minutes.</p>"
+    }
+    try:
+        response = requests.post("https://api.resend.com/emails", json=payload, headers=headers)
+        response.raise_for_status() 
+    except Exception as e:
+        print(f"Resend API Error: {e}")
+        if 'response' in locals():
+            print(f"Resend Details: {response.text}")
+        raise HTTPException(status_code=500, detail="Failed to send email")
+    return {"message":"reset link has been sent."}
 
 
-# class PasswordReset(BaseModel):
-#     token: str
-#     new_password: str
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
 
-# @router.post("/reset-password")
-# async def reset_password(data:PasswordReset):
-#     user = await users_collection.find_one({
-#         'reset_token':data.token,
-#         'reset_expiration':{'$gt':datetime.utcnow()}
-#     })
-#     if not user:
-#         raise HTTPException(status_code=400,detail="expired token.")
-#     hashed_password=pwd_context.hash(data.new_password)
-#     await users_collection.update_one(
-#         {'_id': user['_id']},
-#         {
-#             '$set': {'password': hashed_password},
-#             '$unset': {'reset_token':"",'reset_expiration':""}
-#         }
-#     )
-#     return {"message": "successfully reset."}
+@router.post("/reset-password")
+async def reset_password(data:PasswordReset):
+    user = await users_collection.find_one({
+        'reset_token':data.token,
+        'reset_expiration':{'$gt':datetime.utcnow()}
+    })
+    if not user:
+        raise HTTPException(status_code=400,detail="expired token.")
+    hashed_password=pwd_context.hash(data.new_password)
+    await users_collection.update_one(
+        {'_id': user['_id']},
+        {
+            '$set': {'password': hashed_password},
+            '$unset': {'reset_token':"",'reset_expiration':""}
+        }
+    )
+    return {"message": "successfully reset."}

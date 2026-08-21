@@ -9,6 +9,8 @@ def verify_user(plain_pass:str,hash_pass:str):
 
 async def auth_user(email:str,password:str):
     user_exists=await users_collection.find_one({"email": email})
-    if user_exists and verify_user(password, user_exists["password"]):
-        return True
-    return False
+    if not user_exists:
+        return "NOT_FOUND"
+    if not verify_user(password, user_exists["password"]):
+        return "INVALID_PASSWORD"
+    return "SUCCESS"

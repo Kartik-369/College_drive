@@ -27,6 +27,15 @@ s3_client = boto3.client(
 )
 BUCKET_NAME = os.getenv("B2_BUCKET_NAME")
 
+import re
+
+ALLOWED_FOLDERS = {"DBMS", "JAVA", "Web technology"}
+
+def sanitize_filename(name: str) -> str:
+    name = os.path.basename(name)
+    name = re.sub(r'[^A-Za-z0-9._-]', '_', name)
+    return name or "file"
+
 @router.post('/files/presign')
 async def generate_presigned_url(request: PreSignRequest, token: str = Depends(oauth2_scheme)):
     user = await verify_token(token)
@@ -41,7 +50,11 @@ async def generate_presigned_url(request: PreSignRequest, token: str = Depends(o
     if request.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Only .zip files are permitted.")
 
-    file_key = f"{request.folder_name}/{request.file_name}"
+    if request.folder_name not in ALLOWED_FOLDERS:
+        raise HTTPException(status_code=400, detail="Invalid folder name.")
+
+    safe_name = sanitize_filename(request.file_name)
+    file_key = f"{user['email']}/{request.folder_name}/{uuid.uuid4()}_{safe_name}"
 
     try:
         presigned_url = s3_client.generate_presigned_url(

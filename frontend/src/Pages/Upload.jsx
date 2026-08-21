@@ -14,7 +14,7 @@ function Upload() {
   const subjectFolder = location.state?.folder || "DBMS";
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       navigate("/");
     }
@@ -61,7 +61,7 @@ function Upload() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       alert("Please login first");
       navigate("/");
@@ -77,14 +77,14 @@ function Upload() {
       // Read every dropped file's raw binary data fully into memory
       for (const file of selectedFiles) {
         const relativePath = file.path || file.name;
-        // Strip leading "./" and "/" — Windows Explorer rejects ZIP entries with ./ prefix
+        // Strip leading "./" and "/" — Windows Explorer rejects ZIP
         const cleanPath = relativePath.replace(/^(\.\/|\/)+/, "");
-        if (!cleanPath) continue; // skip empty paths
+        if (!cleanPath) continue;
         const buffer = await file.arrayBuffer();
         zip.file(cleanPath, buffer);
       }
 
-      // Explicitly enable DEFLATE compression
+      // DEFLATE compression
       const zipBlob = await zip.generateAsync({
         type: "blob",
         mimeType: "application/zip",
@@ -108,7 +108,8 @@ function Upload() {
         body: JSON.stringify({
           file_name: zipFileName,
           content_type: "application/zip",
-          size: zipBlob.size
+          size: zipBlob.size,
+          folder_name: subjectFolder
         })
       });
 
@@ -116,7 +117,7 @@ function Upload() {
         throw new Error("Failed to get secure upload link");
       }
 
-      const { upload_url, file_path } = await presignResponse.json();
+      const { upload_url, file_key } = await presignResponse.json();
 
       setUploadProgress("Uploading to Cloud...");
 
@@ -135,7 +136,7 @@ function Upload() {
 
       const b2Endpoint = import.meta.env.VITE_B2_ENDPOINT_URL || "https://s3.us-west-004.backblazeb2.com";
       const bucketName = import.meta.env.VITE_B2_BUCKET_NAME || "your-bucket-name";
-      const downloadUrl = `${b2Endpoint}/${bucketName}/${encodeURIComponent(file_path)}`;
+      const downloadUrl = `${b2Endpoint}/${bucketName}/${encodeURIComponent(file_key)}`;
 
       setUploadProgress("Saving metadata...");
 
@@ -150,7 +151,7 @@ function Upload() {
           size: zipBlob.size,
           cloud_storage_url: downloadUrl,
           subject_folder: subjectFolder,
-          object_key: file_path 
+          object_key: file_key 
         })
       });
 
