@@ -28,6 +28,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Secure CORS (No wildcard regex, strictly defined origins)
 origins = [
     "https://collegedrive-frontend.onrender.com",
+    "https://lab-zip.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
