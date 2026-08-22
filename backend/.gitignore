@@ -28,6 +28,8 @@ upload_files/
 Thumbs.db
 fix_cors.py
 rescue.py
+migrate.py
+db.py
 
 # Optional: If you don't want to track your ML models (since they can be large)
 # Uncomment the line below if you want to ignore them.
